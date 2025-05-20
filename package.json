@@ -4,7 +4,9 @@
   "description": "Track and manage your expenses.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon -r dotenv/config ./index.js",
+    "start": "node ./index.js"
   },
   "keywords": [
     "Transactions",
@@ -22,6 +24,7 @@
   "type": "module",
   "dependencies": {
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mongoose": "^8.15.0"
