@@ -15,7 +15,7 @@ app.use(cors({
 
 
 app.get('/', (req, res) => {
-    return res.send("Server running....✅😊")
+    return res.send("Server running....✅😊");
 })
 
 
