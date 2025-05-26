@@ -48,7 +48,11 @@ const userSchema = new Schema(
         totalExpense: {
             type: Number,
             default: 0
+        },
+        refreshToken: {
+            type: String
         }
+
     },
     {
         timestamps: true
@@ -57,10 +61,6 @@ const userSchema = new Schema(
 
 userSchema.pre("save", async function (next) {
 
-    /*
-        so that bcrypt dont run every time when document is 
-        modified and only run when "password" is modified
-    */
     if (!this.isModified('password')) return next();
     try {
         // console.log('saving password...');
