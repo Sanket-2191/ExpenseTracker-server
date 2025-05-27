@@ -1,31 +1,27 @@
 import { Transaction } from "../models/transaction.model.js";
 import { sendAPIResp } from "../utils/sendApiResp.js";
 import { sendError } from "../utils/sendErrorResp.js";
-
+import { asyncHandler } from "../utils/asyncHandler.js";
 
 // Create a new transaction
-export const createTransaction = async (req, res) => {
-    try {
-        const { amount, type, category, date, description } = req.body;
+export const createTransaction = asyncHandler(async (req, res) => {
+    const { amount, type, category, date, description } = req.body;
 
-        if (!amount || !type || !category || !date) {
-            return sendError(res, 400, 'All required fields must be provided');
-        }
-
-        const transaction = await Transaction.create({
-            amount,
-            type,
-            category,
-            date,
-            description,
-            userId: req.user._id,
-        });
-
-        return sendAPIResp(res, 201, 'Transaction created successfully ✅✅', transaction);
-    } catch (error) {
-        return sendError(res, 500, 'Something went wrong while creating the transaction');
+    if (!amount || !type || !category || !date) {
+        return sendError(res, 400, 'All required fields must be provided');
     }
-};
+
+    const transaction = await Transaction.create({
+        amount,
+        type,
+        category,
+        date,
+        description,
+        userId: req.user._id,
+    });
+
+    return sendAPIResp(res, 201, 'Transaction created successfully ✅✅', transaction);
+});
 
 // Get all transactions for the logged-in user
 export const getAllTransactions = asyncHandler(async (req, res) => {
@@ -33,7 +29,7 @@ export const getAllTransactions = asyncHandler(async (req, res) => {
     const { startDate, endDate, category, type } = req.query;
 
     const filter = {
-        user: userId
+        userId
     };
 
     if (startDate || endDate) {
@@ -43,51 +39,42 @@ export const getAllTransactions = asyncHandler(async (req, res) => {
     }
 
     if (category) filter.category = category;
-    if (type) filter.type = type; // e.g., 'income' or 'expense'
+    if (type) filter.type = type; // 'income' or 'expense'
 
     const transactions = await Transaction.find(filter).sort({ date: -1 });
 
-    return sendAPIResp(res, 200, "Transactions fetched successfully✅✅", transactions);
-},
-    { statusCode: 500, message: "Failed to get transactions" });
+    return sendAPIResp(res, 200, "Transactions fetched successfully ✅✅", transactions);
+});
 
 // Update a transaction
-export const updateTransaction = async (req, res) => {
-    try {
-        const { id } = req.params;
+export const updateTransaction = asyncHandler(async (req, res) => {
+    const { id } = req.params;
 
-        const transaction = await Transaction.findOneAndUpdate(
-            { _id: id, userId: req.user._id },
-            req.body,
-            { new: true, runValidators: true }
-        );
+    const transaction = await Transaction.findOneAndUpdate(
+        { _id: id, userId: req.user._id },
+        req.body,
+        { new: true, runValidators: true }
+    );
 
-        if (!transaction) {
-            return sendError(res, 404, 'Transaction not found or unauthorized');
-        }
-
-        return sendAPIResp(res, 200, 'Transaction updated successfully ✅', transaction);
-    } catch (error) {
-        return sendError(res, 500, 'Something went wrong while updating the transaction');
+    if (!transaction) {
+        return sendError(res, 404, 'Transaction not found or unauthorized');
     }
-};
+
+    return sendAPIResp(res, 200, 'Transaction updated successfully ✅', transaction);
+});
 
 // Delete a transaction
-export const deleteTransaction = async (req, res) => {
-    try {
-        const { id } = req.params;
+export const deleteTransaction = asyncHandler(async (req, res) => {
+    const { id } = req.params;
 
-        const transaction = await Transaction.findOneAndDelete({
-            _id: id,
-            userId: req.user._id,
-        });
+    const transaction = await Transaction.findOneAndDelete({
+        _id: id,
+        userId: req.user._id,
+    });
 
-        if (!transaction) {
-            return sendError(res, 404, 'Transaction not found or unauthorized');
-        }
-
-        return sendAPIResp(res, 200, 'Transaction deleted successfully ✅');
-    } catch (error) {
-        return sendError(res, 500, 'Something went wrong while deleting the transaction');
+    if (!transaction) {
+        return sendError(res, 404, 'Transaction not found or unauthorized');
     }
-};
+
+    return sendAPIResp(res, 200, 'Transaction deleted successfully ✅');
+});
