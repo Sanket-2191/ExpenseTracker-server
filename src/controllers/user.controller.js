@@ -35,7 +35,7 @@ const generate_Access_And_Refresh_Token = async (res, userID) => {
 export const registerUser = asyncHandler(async (req, res) => {
     // get user detail from frontend
     const { name, email, username, password } = req.body;
-    // console.log("req.body structure: ", req.body);
+    console.log("req.body structure: ", req.body);
 
     // validations -> fields are not empty, email is in valid form, password matches strength requirements
     if (!email) return sendError(res, 400, "Email is required!!");
@@ -251,6 +251,85 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
 },
     { statusCode: 500, message: "Unable to fetch Current user." });
 
+export const getUserChannelProfile = asyncHandler(async (req, res) => {
+    // this will generally get trggered when user clicks on other channel link or profile...
+    // get username from params
+    const { username, userId } = req.params;  // we will 
+    // console.log("req.params.username :", username);
+
+    if (!username?.trim()) return sendError(res, 400, "No username received for fetching channel profile.");
+
+    if (userId && !(mongoose.isValidObjectId(userId))) return sendError(res, 400, "userId should be valid for fetching channel profile.");
+
+    const channelProfile = await userModel.aggregate(
+        [
+            userId ? {
+                $match: {
+                    userId: userId
+                }
+            } : {
+                $match: {
+                    username: username
+                }
+            },
+            // find subscribers to user....
+            {
+                $lookup: {
+                    from: "subscriptions",
+                    localField: "_id",
+                    foreignField: "channel",
+                    as: "allSubscribers"
+                }
+            },
+            // find no of user currUser has subscribed to.
+            {
+                $lookup: {
+                    from: "subscriptions",
+                    localField: "_id",
+                    foreignField: "subscriber",
+                    as: "subscribedTo"
+                }
+            },
+            {
+                $addFields: {
+                    subscriberCount: {
+                        $size: "$allSubscribers"
+                    },
+                    subscriptionCount: {
+                        $size: "$subscribedTo"
+                    },
+                    // if logged in user is in the list of "allSubscribers"
+                    isSubscribed: {
+                        $cond: {
+                            //          what to check , where it is checked in
+                            if: { $in: [req.user?._id, "$allSubscribers.subscriber"] },
+                            // req.user?._id as secure route is not needed to access this controller
+                            then: true,
+                            else: false
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    username: 1,
+                    fullName: 1,
+                    avatar: 1,
+                    coverImage: 1,
+                    subscriberCount: 1,
+                    subscriptionCount: 1,
+                    isSubscribed: 1
+                }
+            }
+        ]
+    )
+
+    if (!channelProfile?.length) return sendError(res, 404, "channel not found");
+
+    return sendAPIResp(res, 200, 'Channel profile fetched successfully✅✅', channelProfile?.[0] || {});
+
+},
+    { statusCode: 500, message: "Unable to fetch channel profile :" })
 // BUG-FIXED Make sure the feidnames match in code and in form-data
 // works ✅✅
 export const updateCurrentUserDetail = asyncHandler(async (req, res) => {

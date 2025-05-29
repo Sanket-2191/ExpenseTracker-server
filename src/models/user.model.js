@@ -1,9 +1,9 @@
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 
-import getRandomColor from "../utils/randomColors.util";
-import { sendError } from "../utils/sendErrorResp";
+import getRandomColor from "../utils/randomColors.util.js";
+import { sendError } from "../utils/sendErrorResp.js";
 
 
 const userSchema = new Schema(
@@ -117,4 +117,4 @@ userSchema.methods.generateRefreshToken = function () {
     )
 }
 
-export const User = mongoose.model("User", userSchema);
+export const User = model("User", userSchema);
