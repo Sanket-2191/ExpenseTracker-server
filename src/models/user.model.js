@@ -19,13 +19,13 @@ const userSchema = new Schema(
             unique: true,
             trim: true
         },
-        username: {
-            type: String,
-            unique: true,
-            required: true,
-            index: true, // to optimize searching based on username.
-            trim: true
-        },
+        // username: {
+        //     type: String,
+        //     unique: true,
+        //     required: true,
+        //     index: true, // to optimize searching based on username.
+        //     trim: true
+        // },
         password: {
             type: String,
             required: true,

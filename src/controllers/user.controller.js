@@ -40,7 +40,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     // validations -> fields are not empty, email is in valid form, password matches strength requirements
     if (!email) return sendError(res, 400, "Email is required!!");
     if (!name) return sendError(res, 400, "name is required!!");
-    if (!username) return sendError(res, 400, "Username is required!!");
+    // if (!username) return sendError(res, 400, "Username is required!!");
     if (!password) return sendError(res, 400, "Password is required!!");
 
 
@@ -69,12 +69,11 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     // create user object, get object from DB
     const newUser = await User.create({
-        username,
         name: name,
         email,
         password,
         verified: false,
-        avatar: avatarURL.url,
+        avatar: avatarURL?.url,
     })
 
     // remove password and refresh tkn from feild from response that is being sent to frontend

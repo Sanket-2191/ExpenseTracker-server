@@ -5,9 +5,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 // Create a new transaction
 export const createTransaction = asyncHandler(async (req, res) => {
-    const { amount, type, category, date, description } = req.body;
+    const { amount, type, category, note, date } = req.body;
 
-    if (!amount || !type || !category || !date) {
+    if (!amount || !type || !category || !note) {
         return sendError(res, 400, 'All required fields must be provided');
     }
 
@@ -15,8 +15,8 @@ export const createTransaction = asyncHandler(async (req, res) => {
         amount,
         type,
         category,
-        date,
-        description,
+        note,
+        date: date || null,
         userId: req.user._id,
     });
 

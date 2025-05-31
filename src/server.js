@@ -9,12 +9,26 @@ console.log("In srever");
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-    origin: process.env.CORS_ORIGIN || '*',
-    credentials: true
-}));
+// app.use(cors({
+//     origin: process.env.CORS_ORIGIN || '*',
+//     credentials: true
+// }));
 
+const allowedOrigins = JSON.parse(process.env.CORS_ORIGINS || '[]');
+// E.g. '["http://localhost:5173", "https://dotspend.netlify.app"]'
 
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.get('/', (req, res) => {
     return res.send("Server running....✅😊");
 })

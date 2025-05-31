@@ -27,6 +27,7 @@ const transactionSchema = new Schema(
                 "entertainment",
                 "salary",
                 "investment",
+                "vehicle maintainence", "freelance", "gift",
                 "other",
             ],
 
