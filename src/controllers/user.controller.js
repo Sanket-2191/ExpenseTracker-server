@@ -9,6 +9,11 @@ import { deleteAssestFromCloudinary } from "../utils/deleteCloudinaryAsset.js";
 import { sendError } from "../utils/sendErrorResp.js";
 import { sendAPIResp } from "../utils/sendApiResp.js";
 
+const cookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None"
+}
 
 const generate_Access_And_Refresh_Token = async (res, userID) => {
 
@@ -121,11 +126,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     // send tokens with cookie
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
-    const cookieOptions = {
-        httpOnly: true,
-        secure: true,
-        sameSite: "Strict"
-    }
+
 
     return res.status(200)
         .cookie("accessToken", accessToken, cookieOptions)
@@ -158,11 +159,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
         }
     );
 
-    const cookieOptions = {
-        httpOnly: true,
-        secure: true,
-        sameSite: "Strict"
-    }
+
 
     return res.status(200)
         .clearCookie("accessToken", cookieOptions)
@@ -202,11 +199,7 @@ export const refreshAccessToken = asyncHandler(async (req, res, next) => {
 
     // generate new set of tokens, below method will update refreshtoken in DB.
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await generate_Access_And_Refresh_Token(res, user._id);
-    const cookieOptions = {
-        httpOnly: true,
-        secure: true,
-        sameSite: "Strict"
-    }
+
 
     return res.status(200)
         .cookie("accessToken", newAccessToken, cookieOptions)
