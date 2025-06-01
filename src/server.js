@@ -14,12 +14,13 @@ app.use(cookieParser());
 //     credentials: true
 // }));
 
-const allowedOrigins = JSON.parse(process.env.CORS_ORIGINS || '[]');
+const allowedOrigins = [process.env.LOCAL_CORS_ORIGIN, process.env.APP_CORS_ORIGIN]
 // E.g. '["http://localhost:5173", "https://dotspend.netlify.app"]'
 
 const corsOptions = {
     origin: function (origin, callback) {
-        console.log("allowed origin: ", origin);
+        console.log("request from origin: ", origin);
+        console.log("Allowed: ", allowedOrigins);
 
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
