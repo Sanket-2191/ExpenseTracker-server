@@ -48,8 +48,8 @@ export const registerUser = asyncHandler(async (req, res) => {
     const userEmailExisits = await User.findOne({ email })
     if (userEmailExisits) return sendError(res, 409, "Account already exists with email :" + email);
 
-    const usernameExisits = await User.findOne({ username })
-    if (usernameExisits) return sendError(res, 409, "Account already exists with username :" + username);
+    // const usernameExisits = await User.findOne({ username })
+    // if (usernameExisits) return sendError(res, 409, "Account already exists with username :" + username);
 
     // check for images, check for avatar , cover image is OPTIONAL
     // console.log("Files received:?", req.files || "files not received");
