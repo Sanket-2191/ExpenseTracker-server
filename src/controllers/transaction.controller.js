@@ -53,7 +53,7 @@ export const updateTransaction = asyncHandler(async (req, res) => {
     const transaction = await Transaction.findOneAndUpdate(
         { _id: id, userId: req.user._id },
         { amount, type, category, note, date },
-        { new: true, runValidators: true }
+        { new: true, runValidators: false }
     );
 
     if (!transaction) {
