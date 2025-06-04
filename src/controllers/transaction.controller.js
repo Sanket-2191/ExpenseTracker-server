@@ -50,6 +50,8 @@ export const getAllTransactions = asyncHandler(async (req, res) => {
 export const updateTransaction = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { amount, type, category, note, date } = req.body;
+    console.log("Received transaction for update: ", { amount, type, category, note, date, id });
+
     const transaction = await Transaction.findOneAndUpdate(
         { _id: id, userId: req.user._id },
         { amount, type, category, note, date },
