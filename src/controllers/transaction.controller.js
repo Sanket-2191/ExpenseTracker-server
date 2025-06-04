@@ -49,10 +49,10 @@ export const getAllTransactions = asyncHandler(async (req, res) => {
 // Update a transaction
 export const updateTransaction = asyncHandler(async (req, res) => {
     const { id } = req.params;
-
+    const { amount, type, category, note, date } = req.body;
     const transaction = await Transaction.findOneAndUpdate(
         { _id: id, userId: req.user._id },
-        req.body,
+        { amount, type, category, note, date },
         { new: true, runValidators: true }
     );
 
