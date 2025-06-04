@@ -49,13 +49,13 @@ export const getAllTransactions = asyncHandler(async (req, res) => {
 // Update a transaction
 export const updateTransaction = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { amount, type, category, note, date } = req.body;
-    console.log("Received transaction for update: ", { amount, type, category, note, date, id });
+    const { amount, type, category, note, date, userId } = req.body;
+    console.log("Received transaction for update: ", { amount, type, category, note, date, userId });
 
     const transaction = await Transaction.findOneAndUpdate(
         { _id: id, userId: req.user._id },
         { amount, type, category, note, date },
-        { new: true, runValidators: false }
+        { new: true, runValidators: true }
     );
 
     if (!transaction) {
